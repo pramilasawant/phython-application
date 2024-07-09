@@ -30,7 +30,7 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
-                    withEnv(['MVN_PASSWORD=your_password']){
+                    withEnv(['MVN_PASSWORD=Ganesh@8604']){
                     sh 'sudo -S mvn clean package'
                 }
             }
