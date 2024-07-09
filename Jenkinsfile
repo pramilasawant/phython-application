@@ -30,9 +30,11 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
+                    withEnv(['MVN_PASSWORD=your_password']){
                     sh 'sudo -S mvn clean package'
                 }
             }
+        }
         }
 
         stage('Build Java Docker Image') {
