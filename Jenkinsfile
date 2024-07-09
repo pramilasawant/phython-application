@@ -21,7 +21,7 @@ pipeline {
     stages {
         stage('Checkout Java Application') {
             steps {
-                dir('java-app/testhello') {
+                dir('java-app') {
                     git branch: params.JAVA_BRANCH, url: params.JAVA_REPO_URL
                 }
             }
@@ -29,8 +29,8 @@ pipeline {
         
         stage('Build Java Application') {
             steps {
-                dir('java-app/tethello') {
-                    sh 'mvn clean package'
+                dir('java-app') {
+                    sh 'sudo mvn clean package'
                 }
             }
         }
