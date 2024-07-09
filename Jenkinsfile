@@ -11,7 +11,7 @@ pipeline {
         string(name: 'JAVA_NAMESPACE', defaultValue: 'test1', description: 'Java Kubernetes Namespace')
         string(name: 'PYTHON_NAMESPACE', defaultValue: 'python', description: 'Python Kubernetes Namespace')
         string(name: 'java-app', defaultValue: 'Desktop/testhello')
-        string(name: 'your_passward', defaultValue: 'Ganesh@8604')
+        string(name: 'your_passward', defaultValue: '123')
     }
 
     environment {
