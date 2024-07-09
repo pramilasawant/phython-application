@@ -11,6 +11,7 @@ pipeline {
         string(name: 'JAVA_NAMESPACE', defaultValue: 'test1', description: 'Java Kubernetes Namespace')
         string(name: 'PYTHON_NAMESPACE', defaultValue: 'python', description: 'Python Kubernetes Namespace')
         string(name: 'java-app', defaultValue: 'Desktop/testhello')
+        string(name: 'your_passward', defaultValue: 'Ganesh@8604')
     }
 
     environment {
@@ -30,7 +31,7 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
-                    withEnv(['MVN_PASSWORD=Ganesh@8604']){
+                    withEnv(['MVN_PASSWORD=your_passward']){
                     sh 'sudo -S mvn clean package'
                 }
             }
