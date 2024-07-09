@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'JAVA_REPO_URL', defaultValue: 'https://github.com/pramilasawant/springboot1-application.git', description: 'Java Application Git Repository URL')
+        string(name: 'JAVA_REPO_URL', defaultValue: 'https://github.com/pramilasawant/Testhello_project.git', description: 'Java Application Git Repository URL')
         string(name: 'JAVA_BRANCH', defaultValue: 'main', description: 'Java Application Git Branch')
         string(name: 'PYTHON_REPO_URL', defaultValue: 'https://github.com/pramilasawant/phython-application.git', description: 'Python Application Git Repository URL')
         string(name: 'PYTHON_BRANCH', defaultValue: 'main', description: 'Python Application Git Branch')
@@ -10,7 +10,7 @@ pipeline {
         string(name: 'PYTHON_IMAGE', defaultValue: 'pramila188/python-app', description: 'Python Docker Image Name')
         string(name: 'JAVA_NAMESPACE', defaultValue: 'test1', description: 'Java Kubernetes Namespace')
         string(name: 'PYTHON_NAMESPACE', defaultValue: 'python', description: 'Python Kubernetes Namespace')
-        string(name: 'java-app', defaultValue: 'Desktop/springboot1-application-testhello')
+        string(name: 'java-app', defaultValue: 'Desktop/testhello')
     }
 
     environment {
@@ -30,7 +30,7 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
-                    sh 'mvn clean install'
+                    sh 'mvn clean package'
                 }
             }
         }
