@@ -10,6 +10,7 @@ pipeline {
         string(name: 'PYTHON_IMAGE', defaultValue: 'pramila188/python-app', description: 'Python Docker Image Name')
         string(name: 'JAVA_NAMESPACE', defaultValue: 'test1', description: 'Java Kubernetes Namespace')
         string(name: 'PYTHON_NAMESPACE', defaultValue: 'python', description: 'Python Kubernetes Namespace')
+        string(name: 'java-app', defaultValue: 'Desktop/springboot1-application-testhello')
     }
 
     environment {
