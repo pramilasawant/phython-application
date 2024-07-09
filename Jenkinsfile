@@ -30,7 +30,7 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
-                    sh 'mvn clean package'
+                    sh 'mvn clean install'
                 }
             }
         }
