@@ -14,35 +14,43 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'
-        SLACK_CREDENTIALS_ID = 'slackpwd'
+        SLACK_CREDENTIALS_ID = 'slackpwd'  // Ensure this is the correct ID
     }
 
     stages {
         stage('Checkout Java Application') {
             steps {
-                git branch: params.JAVA_BRANCH, url: params.JAVA_REPO_URL
+                dir('Desktop/springboot1-application-testhello') {
+                    git branch: params.JAVA_BRANCH, url: params.JAVA_REPO_URL
+                }
             }
         }
         
         stage('Build Java Application') {
             steps {
-                sh 'mvn clean package'
+                dir('Desktop/springboot1-application-testhello') {
+                    sh 'mvn clean package'
+                }
             }
         }
 
         stage('Build Java Docker Image') {
             steps {
-                script {
-                    docker.build(params.JAVA_IMAGE)
+                dir('Desktop/springboot1-application-testhello') {
+                    script {
+                        docker.build(params.JAVA_IMAGE)
+                    }
                 }
             }
         }
 
         stage('Push Java Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_CREDENTIALS_ID) {
-                        docker.image(params.JAVA_IMAGE).push()
+                dir('Desktop/springboot1-application-testhello') {
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_CREDENTIALS_ID) {
+                            docker.image(params.JAVA_IMAGE).push()
+                        }
                     }
                 }
             }
@@ -56,29 +64,37 @@ pipeline {
 
         stage('Checkout Python Application') {
             steps {
-                git branch: params.PYTHON_BRANCH, url: params.PYTHON_REPO_URL
+                dir('python-app') {
+                    git branch: params.PYTHON_BRANCH, url: params.PYTHON_REPO_URL
+                }
             }
         }
         
         stage('Build Python Application') {
             steps {
-                sh 'python setup.py install'
+                dir('python-app') {
+                    sh 'python setup.py install'
+                }
             }
         }
 
         stage('Build Python Docker Image') {
             steps {
-                script {
-                    docker.build(params.PYTHON_IMAGE)
+                dir('python-app') {
+                    script {
+                        docker.build(params.PYTHON_IMAGE)
+                    }
                 }
             }
         }
 
         stage('Push Python Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_CREDENTIALS_ID) {
-                        docker.image(params.PYTHON_IMAGE).push()
+                dir('python-app') {
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_CREDENTIALS_ID) {
+                            docker.image(params.PYTHON_IMAGE).push()
+                        }
                     }
                 }
             }
@@ -93,10 +109,22 @@ pipeline {
 
     post {
         always {
-            slackSend (channel: '#build-notifications', color: 'good', message: "Build and deployment completed successfully.")
+            script {
+                try {
+                    slackSend (channel: '#build-notifications', color: 'good', tokenCredentialId: env.SLACK_CREDENTIALS_ID, message: "Build and deployment completed successfully.")
+                } catch (e) {
+                    echo "Slack notification failed: ${e.message}"
+                }
+            }
         }
         failure {
-            slackSend (channel: '#build-notifications', color: 'danger', message: "Build and deployment failed.")
+            script {
+                try {
+                    slackSend (channel: '#build-notifications', color: 'danger', tokenCredentialId: env.SLACK_CREDENTIALS_ID, message: "Build and deployment failed.")
+                } catch (e) {
+                    echo "Slack notification failed: ${e.message}"
+                }
+            }
         }
     }
 }
