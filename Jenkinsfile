@@ -21,7 +21,7 @@ pipeline {
     stages {
         stage('Checkout Java Application') {
             steps {
-                dir('Desktop/springboot1-application-testhello') {
+                dir('java-app') {
                     git branch: params.JAVA_BRANCH, url: params.JAVA_REPO_URL
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
         
         stage('Build Java Application') {
             steps {
-                dir('Desktop/springboot1-application-testhello') {
+                dir('java-app') {
                     sh 'mvn clean package'
                 }
             }
@@ -37,7 +37,7 @@ pipeline {
 
         stage('Build Java Docker Image') {
             steps {
-                dir('Desktop/springboot1-application-testhello') {
+                dir('java-app') {
                     script {
                         docker.build(params.JAVA_IMAGE)
                     }
@@ -47,7 +47,7 @@ pipeline {
 
         stage('Push Java Docker Image') {
             steps {
-                dir('Desktop/springboot1-application-testhello') {
+                dir('java-app') {
                     script {
                         docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_CREDENTIALS_ID) {
                             docker.image(params.JAVA_IMAGE).push()
