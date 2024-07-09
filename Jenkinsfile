@@ -32,7 +32,7 @@ pipeline {
             steps {
                 dir('java-app') {
                     withEnv(['MVN_PASSWORD=your_passward']){
-                    sh 'mvn clean package'
+                    sh mvn 'clean package'
                 }
             }
         }
