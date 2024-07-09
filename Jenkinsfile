@@ -30,7 +30,7 @@ pipeline {
         stage('Build Java Application') {
             steps {
                 dir('java-app') {
-                    sh 'sudo mvn clean package'
+                    sh 'sudo -S mvn clean package'
                 }
             }
         }
