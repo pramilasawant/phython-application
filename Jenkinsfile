@@ -16,31 +16,57 @@ pipeline {
             }
         }
 
+        stage('Checkout Repositories') {
+            parallel {
+                stage('Checkout Java Application') {
+                    steps {
+                        git branch: 'main', url: 'https://github.com/pramilasawant/springboot1-application.git'
+                    }
+                }
+                stage('Checkout Python Application') {
+                    steps {
+                        git branch: 'main', url: 'https://github.com/pramilasawant/phython-application.git'
+                    }
+                }
+            }
+        }
+
         stage('Build and Deploy') {
-            steps {
-                script {
-                    // Calling a custom build step defined in shared library
-                    build(
-                        javaRepo: 'https://github.com/pramilasawant/springboot1-application.git',
-                        pythonRepo: 'https://github.com/pramilasawant/phython-application.git'
-                    )
+            parallel {
+                stage('Build and Push Java Application') {
+                    steps {
+                        script {
+                            docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
+                                def javaImage = docker.build("${DOCKERHUB_USERNAME}/testhello:latest", 'Desktop/springboot1-application/testhello')
+                                javaImage.push()
+                            }
+                        }
+                    }
+                }
+
+                stage('Build and Push Python Application') {
+                    steps {
+                        script {
+                            docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
+                                def pythonImage = docker.build("${DOCKERHUB_USERNAME}/python-app:latest", 'Desktop/python-app')
+                                pythonImage.push()
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-    
+
     post {
         always {
-            // Clean up any resources if needed
-            deleteDir()
+            cleanWs() // Clean workspace after build
         }
         success {
-            // Actions to take if the pipeline succeeds
-            echo "Pipeline completed successfully!"
+            slackSend (color: '#00FF00', message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
         }
         failure {
-            // Actions to take if the pipeline fails
-            echo "Pipeline failed!"
+            slackSend (color: '#FF0000', message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
         }
     }
 }
