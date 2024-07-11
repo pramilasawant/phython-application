@@ -1,35 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: python-k8s-deployment
+  name: java-app
+  namespace: test1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: python-boot-k8s
+      app: java-app
   template:
     metadata:
       labels:
-        app: python-boot-k8s
+        app: java-app
     spec:
       containers:
-      - name: python-boot-k8s
-        image: python-app:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 80
-
+        - name: java-app
+          image: pramila188/testhello:latest
+          ports:
+            - containerPort: 8080
 ---
-
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: python-k8ssvc
+  name: python-app
+  namespace: python
 spec:
+  replicas: 1
   selector:
-    app: python-boot-k8s
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: NodePort
+    matchLabels:
+      app: python-app
+  template:
+    metadata:
+      labels:
+        app: python-app
+    spec:
+      containers:
+        - name: python-app
+          image: pramila188/python-app:latest
+          ports:
+            - containerPort: 5000
