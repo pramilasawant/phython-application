@@ -32,6 +32,7 @@ pipeline {
     post {
         always {
             // Clean up any resources if needed
+            deleteDir()
         }
         success {
             // Actions to take if the pipeline succeeds
