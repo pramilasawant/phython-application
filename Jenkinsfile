@@ -24,20 +24,4 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            slackSend(
-                channel: '#build-notifications',
-                tokenCredentialId: SLACK_CREDENTIALS,
-                message: "Build and Deployment Successful: ${env.BUILD_URL}"
-            )
-        }
-        failure {
-            slackSend(
-                channel: '#build-notifications',
-                tokenCredentialId: SLACK_CREDENTIALS,
-                message: "Build and Deployment Failed: ${env.BUILD_URL}"
-            )
-        }
-    }
-}
+  
