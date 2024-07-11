@@ -3,7 +3,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhunpwd')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhubpwd')
         DOCKERHUB_USERNAME = 'pramila188'
         SLACK_CREDENTIALS = 'slackpwd'
     }
