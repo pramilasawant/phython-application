@@ -20,12 +20,16 @@ pipeline {
             parallel {
                 stage('Checkout Java Application') {
                     steps {
-                        git branch: 'main', url: 'https://github.com/pramilasawant/springboot1-application.git'
+                        dir('java-app') {
+                            git branch: 'main', url: 'https://github.com/pramilasawant/springboot1-application.git'
+                        }
                     }
                 }
                 stage('Checkout Python Application') {
                     steps {
-                        git branch: 'main', url: 'https://github.com/pramilasawant/phython-application.git'
+                        dir('python-app') {
+                            git branch: 'main', url: 'https://github.com/pramilasawant/phython-application.git'
+                        }
                     }
                 }
             }
@@ -36,9 +40,11 @@ pipeline {
                 stage('Build and Push Java Application') {
                     steps {
                         script {
-                            docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
-                                def javaImage = docker.build("${DOCKERHUB_USERNAME}/testhello:latest", 'Desktop/springboot1-application/testhello')
-                                javaImage.push()
+                            dir('java-app') {
+                                docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
+                                    def javaImage = docker.build("${DOCKERHUB_USERNAME}/testhello:latest", '.')
+                                    javaImage.push()
+                                }
                             }
                         }
                     }
@@ -47,9 +53,11 @@ pipeline {
                 stage('Build and Push Python Application') {
                     steps {
                         script {
-                            docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
-                                def pythonImage = docker.build("${DOCKERHUB_USERNAME}/python-app:latest", 'Desktop/python-app')
-                                pythonImage.push()
+                            dir('python-app') {
+                                docker.withRegistry('https://index.docker.io/v1/', 'dockerhubpwd') {
+                                    def pythonImage = docker.build("${DOCKERHUB_USERNAME}/python-app:latest", '.')
+                                    pythonImage.push()
+                                }
                             }
                         }
                     }
@@ -63,10 +71,10 @@ pipeline {
             cleanWs() // Clean workspace after build
         }
         success {
-            slackSend (color: '#00FF00', message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
+            slackSend (color: '#00FF00', message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER}", tokenCredentialId: SLACK_CREDENTIALS)
         }
         failure {
-            slackSend (color: '#FF0000', message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
+            slackSend (color: '#FF0000', message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}", tokenCredentialId: SLACK_CREDENTIALS)
         }
     }
 }
